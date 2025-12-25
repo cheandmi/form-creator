@@ -15,6 +15,8 @@ const props = withDefaults(
   }>(),
   {
     type: 'text',
+    error: '',
+    isRequired: false,
     required: false,
     isDisabled: false,
   }
@@ -22,10 +24,12 @@ const props = withDefaults(
 
 const emit = defineEmits(['update:modelValue'])
 
-const onInput = (event: Event): void => {
-  const value = (event.target as HTMLInputElement).value
-  emit('update:modelValue', value)
-}
+const model = computed({
+  get: () => props.modelValue,
+  set: (value: string) => {
+    emit('update:modelValue', value)
+  },
+})
 
 const clearInput = (): void => {
   emit('update:modelValue', '')
@@ -49,14 +53,13 @@ const stateClasses = computed(() => ({
 
       <div class="ui-input__row">
         <input
+          v-model="model"
           class="ui-input__input"
           :type="type"
           :placeholder="placeholder"
-          :value="modelValue"
           :disabled="isDisabled"
           :maxlength="maxlength"
-          autocomplete="false"
-          @input="onInput"
+          autocomplete="off"
         />
 
         <button v-if="showClear" type="button" class="ui-input__clear" @click="clearInput">
@@ -71,8 +74,6 @@ const stateClasses = computed(() => ({
           </svg>
         </button>
       </div>
-
-      <div class="ui-input__underline"></div>
     </div>
 
     <p v-if="error" class="ui-input__error">Ошибка</p>
@@ -83,110 +84,102 @@ const stateClasses = computed(() => ({
 .ui-input {
   display: block;
   position: relative;
+}
 
-  &__input-container {
-    background: var(--ui-bg);
-    display: flex;
-    flex-direction: column;
-    align-items: flex-start;
+.ui-input__input-container {
+  background: var(--ui-bg);
+  display: flex;
+  flex-direction: column;
+  align-items: flex-start;
+  width: 100%;
+}
 
-    &:focus {
-      .ui-input__underline {
-        background: var(--ui-line-strong);
-        height: 1px;
-      }
-    }
-  }
+.ui-input__label {
+  font-size: 11px;
+  line-height: 12px;
+  height: 12px;
+  text-transform: uppercase;
+  color: var(--ui-label);
+  user-select: none;
+  margin-bottom: 4px;
+}
 
-  &__label {
-    font-size: 11px;
-    text-transform: uppercase;
-    color: var(--ui-label);
-    user-select: none;
-  }
+.ui-input__required {
+  color: var(--ui-error);
+}
 
-  &__required {
-    color: var(--ui-error);
-  }
+.ui-input__row {
+  position: relative;
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  height: 36px;
+  border: 1px solid var(--ui-line);
+  width: 100%;
+}
 
-  &__row {
-    position: relative;
-    display: flex;
-    align-items: center;
-    gap: 8px;
-    padding: 4px 0px 4px;
-  }
+.ui-input__row:focus-within {
+  border-color: var(--ui-line-strong);
+}
 
-  &__input {
-    width: 100%;
-    border: 0;
-    outline: none;
-    background: transparent;
-    color: var(--ui-text);
-    font-size: 15px;
-    line-height: 22px;
-    padding: 0px 25px 0px 0px;
-    &::placeholder {
-      color: var(--ui-placeholder);
-    }
-    &:disabled {
-      cursor: not-allowed;
-      opacity: 0.6;
-    }
-  }
+.ui-input__input {
+  width: 100%;
+  border: 0;
+  outline: none;
+  background: transparent;
+  color: var(--ui-text);
+  font-size: 15px;
+  line-height: 36px;
+  height: 36px;
+  padding: 0px 25px 0px 10px;
+}
 
-  &__underline {
-    height: 1px;
-    width: 100%;
-    background: var(--ui-line);
-    transition: 0.2s;
-  }
+.ui-input__input::placeholder {
+  color: var(--ui-placeholder);
+}
 
-  &__error {
-    margin: 0;
-    font-size: 12px;
-    color: var(--ui-error);
-    position: absolute;
-    bottom: -25px;
-    left: 0px;
-  }
+.ui-input__input:disabled {
+  cursor: not-allowed;
+  opacity: 0.6;
+}
 
-  &__clear {
-    color: rgba(15, 23, 42, 0.35);
-    cursor: pointer;
-    padding: 0px;
-    background: none;
-    transition: 1s linear;
-    position: absolute;
-    right: 5px;
-    top: 5px;
-    outline: none;
-    border: none;
-    &:hover {
-      color: rgba(15, 23, 42, 0.7);
-    }
-    svg {
-      width: 16px;
-      height: 16px;
-    }
-  }
+.ui-input__error {
+  margin: 0;
+  font-size: 12px;
+  color: var(--ui-error);
+  margin-top: 6px;
+}
 
-  &--disabled {
-    .ui-input__underline {
-      background: rgba(15, 23, 42, 0.1);
-    }
-    .ui-input__clear {
-      display: none;
-    }
-  }
+.ui-input__clear {
+  color: rgba(15, 23, 42, 0.35);
+  cursor: pointer;
+  padding: 0px;
+  background: none;
+  position: absolute;
+  right: 10px;
+  top: 10px;
+  outline: none;
+  border: none;
+}
 
-  &--error {
-    .ui-input__underline {
-      background: var(--ui-error) !important;
-    }
-    .ui-input__label {
-      color: var(--ui-error);
-    }
-  }
+.ui-input__clear:hover {
+  color: rgba(15, 23, 42, 0.7);
+}
+
+.ui-input__clear svg {
+  width: 16px;
+  height: 16px;
+}
+
+.ui-input--disabled .ui-input__clear {
+  display: none;
+}
+
+.ui-input--error .ui-input__row {
+  border: 1px solid var(--ui-error);
+}
+
+.ui-input--error .ui-input__label {
+  color: var(--ui-error);
 }
 </style>

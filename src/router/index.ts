@@ -1,10 +1,10 @@
 import { createRouter, createWebHistory } from 'vue-router'
-import App from '@/App.vue'
+import FormsPage from '@/views/FormsPage.vue'
 
 const routes = [
   {
     path: '/',
-    component: App,
+    component: FormsPage,
   },
 ]
 
