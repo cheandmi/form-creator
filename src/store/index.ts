@@ -1,6 +1,6 @@
 ﻿import { createStore } from 'vuex'
 
-export type FieldType = 'input' | 'select' | 'checkbox' | 'textarea'
+export type FieldType = 'input' | 'select' | 'checkbox' | 'textarea' | 'toggle'
 
 export type SelectOption = {
   label: string
@@ -95,11 +95,13 @@ const store = createStore<State>({
           notifications: true,
           theme: 'light',
           notes: '',
+          autoSave: false,
         },
         saveText: 'Сохранить',
         cancelText: 'Отменить',
         fields: [
           { name: 'notifications', type: 'checkbox', label: 'Включить уведомления' },
+          { name: 'autoSave', type: 'toggle', label: 'Автосохранение' },
           {
             name: 'theme',
             type: 'select',
@@ -130,6 +132,21 @@ const store = createStore<State>({
       for (const key in form.values) {
         form.values[key] = typeof form.values[key] === 'boolean' ? false : ''
       }
+    },
+    addForm(state: State, payload: { title: string; fields: FieldItem[] }) {
+      const values: Record<string, unknown> = {}
+      payload.fields.forEach((field) => {
+        values[field.name] = field.type === 'checkbox' || field.type === 'toggle' ? false : ''
+      })
+
+      state.forms.push({
+        id: createFormId(),
+        title: payload.title,
+        fields: payload.fields,
+        values,
+        saveText: 'Сохранить',
+        cancelText: 'Отменить',
+      })
     },
   },
 })

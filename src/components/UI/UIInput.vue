@@ -17,7 +17,6 @@ const props = withDefaults(
     type: 'text',
     error: '',
     isRequired: false,
-    required: false,
     isDisabled: false,
   }
 )
@@ -76,7 +75,7 @@ const stateClasses = computed(() => ({
       </div>
     </div>
 
-    <p v-if="error" class="ui-input__error">Ошибка</p>
+    <p v-if="error" class="ui-input__error">{{ error }}</p>
   </div>
 </template>
 
@@ -84,6 +83,19 @@ const stateClasses = computed(() => ({
 .ui-input {
   display: block;
   position: relative;
+
+  &--error {
+    .ui-input__row {
+      border: 1px solid var(--ui-error);
+    }
+    .ui-input__label {
+      color: var(--ui-error);
+    }
+  }
+
+  &--disabled .ui-input__clear {
+    display: none;
+  }
 }
 
 .ui-input__input-container {
@@ -116,6 +128,7 @@ const stateClasses = computed(() => ({
   height: 36px;
   border: 1px solid var(--ui-line);
   width: 100%;
+  box-sizing: border-box;
 }
 
 .ui-input__row:focus-within {
@@ -160,26 +173,14 @@ const stateClasses = computed(() => ({
   top: 10px;
   outline: none;
   border: none;
-}
 
-.ui-input__clear:hover {
-  color: rgba(15, 23, 42, 0.7);
-}
+  svg {
+    width: 16px;
+    height: 16px;
+  }
 
-.ui-input__clear svg {
-  width: 16px;
-  height: 16px;
-}
-
-.ui-input--disabled .ui-input__clear {
-  display: none;
-}
-
-.ui-input--error .ui-input__row {
-  border: 1px solid var(--ui-error);
-}
-
-.ui-input--error .ui-input__label {
-  color: var(--ui-error);
+  &:hover {
+    color: rgba(15, 23, 42, 0.7);
+  }
 }
 </style>

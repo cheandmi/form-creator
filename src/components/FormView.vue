@@ -4,9 +4,10 @@ import UIInput from '@/components/UI/UIInput.vue'
 import UiSelect from '@/components/UI/UiSelect.vue'
 import UiCheckbox from '@/components/UI/UiCheckbox.vue'
 import UiTextArea from '@/components/UI/UiTextArea.vue'
+import UiToggle from '@/components/UI/UiToggle.vue'
 import UiButton from '@/components/UI/UiButton.vue'
 
-type FieldType = 'input' | 'select' | 'checkbox' | 'textarea'
+type FieldType = 'input' | 'select' | 'checkbox' | 'textarea' | 'toggle'
 
 type SelectOption = {
   label: string
@@ -23,12 +24,14 @@ type FieldDefinition = {
 
 const props = withDefaults(
   defineProps<{
+    title?: string
     fields: FieldDefinition[]
     modelValue: Record<string, unknown>
     saveText?: string
     cancelText?: string
   }>(),
   {
+    title: '',
     saveText: 'Сохранить',
     cancelText: 'Отменить',
   }
@@ -69,6 +72,7 @@ const onCancel = () => {
 
 <template>
   <form class="form-view" @submit.prevent="onSave">
+    <h2 v-if="title" class="form-view__title">{{ title }}</h2>
     <div class="form-view__fields">
       <div v-for="field in fields" :key="field.name" class="form-view__field">
         <UIInput
@@ -96,6 +100,14 @@ const onCancel = () => {
           @update:model-value="(value: boolean) => updateField(field.name, value)"
         />
 
+        <UiToggle
+          v-else-if="field.type === 'toggle'"
+          :model-value="Boolean(model[field.name])"
+          :label="field.label"
+          v-bind="field.props"
+          @update:model-value="(value: boolean) => updateField(field.name, value)"
+        />
+
         <UiTextArea
           v-else-if="field.type === 'textarea'"
           :model-value="getStringFieldValue(field.name)"
@@ -117,6 +129,12 @@ const onCancel = () => {
 .form-view {
   display: grid;
   gap: 16px;
+}
+
+.form-view__title {
+  margin: 0;
+  font-size: 20px;
+  color: #0f172a;
 }
 
 .form-view__fields {
