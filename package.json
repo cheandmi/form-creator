@@ -9,7 +9,9 @@
     "preview": "vite preview",
     "lint": "eslint .",
     "lint:fix": "eslint . --fix",
-    "format": "prettier --write ."
+    "format": "prettier --write .",
+    "predeploy": "npm run build",
+    "deploy": "gh-pages -d dist"
   },
   "dependencies": {
     "vue": "^3.5.24",
@@ -27,6 +29,7 @@
     "eslint-config-prettier": "^10.1.8",
     "eslint-plugin-prettier": "^5.5.4",
     "eslint-plugin-vue": "^10.6.2",
+    "gh-pages": "^6.3.0",
     "prettier": "^3.7.4",
     "sass": "^1.97.1",
     "typescript": "~5.9.3",
